@@ -24,6 +24,12 @@ public class MainActivity extends Activity implements SensorEventListener {
   private View view;
   private long lastUpdate;
   public int paused = 0;
+  String Acc;
+  String Gyro;
+  File AccF;
+  OutputStream AccFO;
+  File GyroF;
+  OutputStream GyroFO;
 
   /** Called when the activity is first created. */
   @Override
@@ -40,35 +46,49 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     lastUpdate = System.currentTimeMillis();
 
-//    Button btn = (Button) findViewById(R.id.start);
-//
-//    btn.setOnClickListener(new View.OnClickListener() {
-//      @Override
-//      public void onClick(View view) {
+    Acc = "accel.csv";
+    Gyro = "gyro.csv";
+    try{
+      AccF = new File(this.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),Acc);
+      AccF.createNewFile();
+      try {
+        AccFO = new FileOutputStream(AccF);
+      }
+      catch(Exception e){
+        e.printStackTrace();
+      }
+    }
+    catch(Exception e){
+      e.printStackTrace();
+    }
 
-//        Intent i = new Intent(MainActivity.this, Main2Activity.class);
-//
-//        startActivity(i);
-//        if (paused == 1)
-//        {
-//          onResume();
-//        }
-//
-//
-//      }
-//    });
+    try{
+      GyroF = new File(this.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),Gyro);
+      GyroF.createNewFile();
+      try {
+        GyroFO = new FileOutputStream(GyroF);
+      }
+      catch(Exception e){
+        e.printStackTrace();
+      }
+    }
+    catch(Exception e){
+      e.printStackTrace();
+    }
 
     Button btn2 = (Button) findViewById(R.id.stop);
+    System.out.println("Here-1");
 
     btn2.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
 
+        System.out.println("Here0");
         Intent i = new Intent(MainActivity.this, Main2Activity.class);
+        System.out.println("Here1");
 
         startActivity(i);
-//        onPause();
-//        paused = 1;
+
       }
     });
 
@@ -186,38 +206,46 @@ public class MainActivity extends Activity implements SensorEventListener {
   }
 
   public void writeToCsv(String x,String y,String z) throws IOException{
-
-    File folder = new File(Environment.getDataDirectory() + "/project");
-    boolean success = true;
-    if (!folder.exists()) {
-      success = folder.mkdir();
+//
+//    File folder = new File(Environment.getDataDirectory() + "/project");
+//    boolean success = true;
+//    if (!folder.exists()) {
+//      success = folder.mkdir();
+//    }
+//    if (success) {
+//      // Do something on success
+//      String csv = "AccelerometerValue.csv";
+//      //File flie1 = new File(Environment.)
+//      FileWriter file_writer = new FileWriter(csv,true);;
+    try {
+      String s = x + "," + y + "," + z + "\n";
+      AccFO.write(s.getBytes());
+    }  catch (NullPointerException e) {      e.printStackTrace();}
+    catch (Exception e) {      e.printStackTrace();
     }
-    if (success) {
-      // Do something on success
-      String csv = "AccelerometerValue.csv";
-      // File flie1 = new File(Environment.)
-      FileWriter file_writer = new FileWriter(csv,true);;
-      String s=x + ","+y+","+z+"\n";
-      file_writer.append(s);
-      file_writer.close();
-    }
+     //file_writer.close();
+    //}
   }
 
   public void writeToCsvGy(String x,String y,String z) throws IOException {
 
 
-    File folder = new File(Environment.getDataDirectory() + "/TollCulator");
-    boolean success = true;
-    if (!folder.exists()) {
-      success = folder.mkdir();
-    }
-    if (success) {
-      // Do something on success
-      String csv = "/storage/sdcard0/project/GyroscopeValue.csv";
-      FileWriter file_writer = new FileWriter(csv,true);
-      String s=x + ","+y+","+z+"\n";
-      file_writer.append(s);
-      file_writer.close();
+//    File folder = new File(Environment.getDataDirectory() + "/TollCulator");
+//    boolean success = true;
+//    if (!folder.exists()) {
+//      success = folder.mkdir();
+//    }
+//    if (success) {
+//      // Do something on success
+//      String csv = "/storage/sdcard0/project/GyroscopeValue.csv";
+//      FileWriter file_writer = new FileWriter(csv,true);
+    try {
+      String s = x + "," + y + "," + z + "\n";
+      GyroFO.write(s.getBytes());
+//      file_writer.close();
+//    }
+    } catch (NullPointerException e) {      e.printStackTrace();}
+    catch (Exception e) {      e.printStackTrace();
     }
 
 
@@ -240,5 +268,15 @@ public class MainActivity extends Activity implements SensorEventListener {
     // unregister listener
     super.onPause();
     sensorManager.unregisterListener(this);
+    try {
+      GyroFO.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    try {
+      AccFO.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 }

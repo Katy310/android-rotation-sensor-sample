@@ -126,14 +126,14 @@ public class MainActivity extends Activity implements SensorEventListener {
 
 //in your OnCreate() method
     myAwesomeTextView1.setText(Float.toString(y));
-    myAwesomeTextView1.setBackgroundColor(Math.round(yToGreen));
+    myAwesomeTextView1.setBackgroundColor(Color.argb(128,0,Math.round(yToGreen),0));
 
 
     TextView myAwesomeTextView2 = (TextView)findViewById(R.id.textView13);
 
 //in your OnCreate() method
     myAwesomeTextView2.setText(Float.toString(z));
-    myAwesomeTextView2.setBackgroundColor(Math.round(zToBlue));
+    myAwesomeTextView2.setBackgroundColor(Color.argb(128,0,0,Math.round(zToBlue)));
 
   }
 
@@ -143,6 +143,14 @@ public class MainActivity extends Activity implements SensorEventListener {
     float x = values[0];
     float y = values[1];
     float z = values[2];
+    SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+    Sensor proximitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+    float max = proximitySensor.getMaximumRange();
+    float min = max * -1;
+    float xToRed = map(x, min, max, 0, 255);  // you declare this
+    //System.out.println(xToRed);
+    float yToGreen = map(x, min, max, 0, 255);
+    float zToBlue = map(x, min, max, 0, 255);
     try {
       writeToCsvGy(Float.toString(x),Float.toString(y),Float.toString(z));
 
@@ -155,13 +163,18 @@ public class MainActivity extends Activity implements SensorEventListener {
 
 //in your OnCreate() method
     myAwesomeTextView.setText(Float.toString(x));
+    myAwesomeTextView.setBackgroundColor(Color.argb(128,Math.round(xToRed),0,0));
 
     TextView myAwesomeTextView1 = (TextView)findViewById(R.id.textView16);
+    myAwesomeTextView1.setBackgroundColor(Color.argb(128,0,Math.round(yToGreen),0));
+
 
 //in your OnCreate() method
     myAwesomeTextView1.setText(Float.toString(y));
 
     TextView myAwesomeTextView2 = (TextView)findViewById(R.id.textView15);
+    myAwesomeTextView2.setBackgroundColor(Color.argb(128,0,0,Math.round(zToBlue)));
+
 
 //in your OnCreate() method
     myAwesomeTextView2.setText(Float.toString(z));
@@ -181,7 +194,8 @@ public class MainActivity extends Activity implements SensorEventListener {
     }
     if (success) {
       // Do something on success
-      String csv = "/project/AccelerometerValue.csv";
+      String csv = "AccelerometerValue.csv";
+      // File flie1 = new File(Environment.)
       FileWriter file_writer = new FileWriter(csv,true);;
       String s=x + ","+y+","+z+"\n";
       file_writer.append(s);
